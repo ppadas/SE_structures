@@ -1,4 +1,4 @@
-﻿#ifndef TEMPLATES_LIST_2022_02_03
+#ifndef TEMPLATES_LIST_2022_02_03
 #define TEMPLATES_LIST_2022_02_03
 
 #include <iostream>
@@ -41,7 +41,9 @@ namespace lab618
                     m_pBegin = nullptr;
                     return;
                 }
-                m_pCurrent = m_pCurrent->pnext;
+                if (m_pCurrent != nullptr) {
+                    m_pCurrent = m_pCurrent->pnext;
+                }
             }
 
             T& getData() {
@@ -132,6 +134,9 @@ namespace lab618
                     previous = previous->pnext ;
                 }
                 previous->pnext = it.getLeaf()->pnext;
+                if (it.getLeaf() == m_pEnd) {
+                    m_pEnd = previous;
+                }
                 it.getLeaf()->~leaf();
                 it.setLeaf(previous);
             }
@@ -203,7 +208,9 @@ namespace lab618
                     m_pBegin = nullptr;
                     return;
                 }
-                m_pCurrent = m_pCurrent->pnext;
+                if (m_pCurrent != nullptr) {
+                    m_pCurrent = m_pCurrent->pnext;
+                }
             }
 
             void operator--() {
@@ -212,7 +219,9 @@ namespace lab618
                     m_pEnd = nullptr;
                     return;
                 }
-                m_pCurrent = m_pCurrent->pprev;
+                if (m_pCurrent != nullptr) {
+                    m_pCurrent = m_pCurrent->pprev;
+                }
             }
 
             T& getData() {
@@ -240,8 +249,8 @@ namespace lab618
 
             // применяется в erase и eraseAndNext
             void setLeafPostEnd(leaf* p) {
-                m_pEnd = nullptr;
-                m_pCurrent = p;
+                m_pCurrent = nullptr;
+                m_pEnd = p;
             }
 
             bool isValid() {
@@ -316,6 +325,8 @@ namespace lab618
                 previous->pnext = it.getLeaf()->pnext;
                 if (it.getLeaf() != m_pEnd) {
                     it.getLeaf()->pnext->pprev = previous;
+                } else {
+                    m_pEnd = previous;
                 }
                 it.getLeaf()->~leaf();
                 it.setLeaf(previous);
@@ -336,7 +347,9 @@ namespace lab618
                 leaf* next = it.getLeaf()->pnext;
                 next->pprev = it.getLeaf()->pprev;
                 if (it.getLeaf() != m_pBegin) {
-                    it.getLeaf()->pprev->ppnext = next;
+                    it.getLeaf()->pprev->pnext = next;
+                } else {
+                    m_pBegin = next;
                 }
                 it.getLeaf()->~leaf();
                 it.setLeaf(next);
@@ -376,3 +389,4 @@ namespace lab618
     };
 };
 #endif //#ifndef TEMPLATES_LIST_2022_02_03
+

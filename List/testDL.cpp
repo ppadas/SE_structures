@@ -163,6 +163,7 @@ TEST_CASE("erase") {
             }
             CHECK(list.popFront().value == i);
         }
+        auto it = list.begin();
     }
 
     SUBCASE("all") {
@@ -176,9 +177,62 @@ TEST_CASE("erase") {
         for (lab618::CDualLinkedList<Data>::CIterator it = list.begin(); it.isValid(); ++it) {
             CHECK(it.getData().value == value);
             ++value;
-            if (it.getData().value % 4 == 0) {
-                list.erase(it);
-            }
+            list.erase(it);
         }
+        CHECK(list.getSize() == 0);
     }
 }
+
+TEST_CASE("erase_and_next") {
+    SUBCASE("delete_last") {
+        lab618::CDualLinkedList<Data> list;
+        Data data1(1);
+        Data data2(2);
+        list.pushBack(data1);
+        list.pushBack(data2);
+        lab618::CDualLinkedList<Data>::CIterator end_it = list.end();
+        CHECK(end_it.getData().value == data2.value);
+        list.erase(end_it);
+        CHECK(list.popFront().value == data1.value);
+        CHECK(list.getSize() == 0);
+    }
+
+    SUBCASE("by_condition") {
+        lab618::CDualLinkedList<Data> list;
+        int size = 100;
+        for (int i = 0; i < size; ++i) {
+            Data data(i);
+            list.pushBack(data);
+        }
+        for (lab618::CDualLinkedList<Data>::CIterator it = list.end(); it.isValid(); --it) {
+            if (it.getData().value % 4 == 0) {
+                list.eraseAndNext(it);
+            }
+        }
+        for (int i = 0; i < size; ++i) {
+            if (i % 4 == 0) {
+                continue;
+            }
+            CHECK(list.popFront().value == i);
+        }
+        auto it = list.begin();
+    }
+
+    SUBCASE("all") {
+        lab618::CDualLinkedList<Data> list;
+        int size = 100;
+        for (int i = 0; i < size; ++i) {
+            Data data(i);
+            list.pushBack(data);
+        }
+        std::cout << list.getSize() << "\n";
+        int value = size - 1;
+        for (lab618::CDualLinkedList<Data>::CIterator it = list.end(); it.isValid(); --it) {
+            CHECK(it.getData().value == value);
+            --value;
+            list.eraseAndNext(it);
+        }
+        CHECK(list.getSize() == 0);
+    }
+}
+
