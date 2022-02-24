@@ -156,7 +156,7 @@ namespace lab618
         }
 
         void clear() {
-            for(CIterator& it = begin(); it.isValid(); ++it) {
+            for(CIterator it = begin(); it.isValid(); ++it) {
                 erase(it);
             }
         }
@@ -370,7 +370,7 @@ namespace lab618
         }
 
         void clear() {
-            for(CIterator& it = begin(); it.isValid(); ++it) {
+            for(CIterator it = begin(); it.isValid(); ++it) {
                 erase(it);
             }
         }
