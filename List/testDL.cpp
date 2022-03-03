@@ -46,6 +46,64 @@ TEST_CASE("push") {
     }
 }
 
+TEST_CASE("pop") {
+    SUBCASE("popBack one") {
+        lab618::CDualLinkedList<Data> list;
+        int size = 100;
+        for (int i = 0; i < size; ++i) {
+            Data data(i);
+            list.pushBack(data);
+        }
+        CHECK(size == list.getSize());
+        list.popBack();
+        CHECK(list.getSize() == size - 1);
+        CHECK(list.begin().getData().value == 0);
+        CHECK(list.end().getData().value == size - 2);
+    }
+
+    SUBCASE("popFront one") {
+        lab618::CDualLinkedList<Data> list;
+        int size = 100;
+        for (int i = 0; i < size; ++i) {
+            Data data(i);
+            list.pushBack(data);
+        }
+        CHECK(size == list.getSize());
+        list.popFront();
+        CHECK(list.getSize() == size - 1);
+        CHECK(list.begin().getData().value == 1);
+        CHECK(list.end().getData().value == size - 1);
+    }
+
+    SUBCASE("popBack all") {
+        lab618::CDualLinkedList<Data> list;
+        int size = 100;
+        for (int i = 0; i < size; ++i) {
+            Data data(i);
+            list.pushBack(data);
+        }
+        CHECK(size == list.getSize());
+        for (int i = 0; i < size; ++i) {
+            list.popBack();
+        }
+        CHECK(list.getSize() == 0);
+    }
+
+    SUBCASE("popFront all") {
+        lab618::CDualLinkedList<Data> list;
+        int size = 100;
+        for (int i = 0; i < size; ++i) {
+            Data data(i);
+            list.pushBack(data);
+        }
+        CHECK(size == list.getSize());
+        for (int i = 0; i < size; ++i) {
+            list.popFront();
+        }
+        CHECK(list.getSize() == 0);
+    }
+}
+
 TEST_CASE("push+pop") {
     SUBCASE("symmetry_lists") {
         lab618::CDualLinkedList<Data> list1;
@@ -225,7 +283,6 @@ TEST_CASE("erase_and_next") {
             Data data(i);
             list.pushBack(data);
         }
-        std::cout << list.getSize() << "\n";
         int value = size - 1;
         for (lab618::CDualLinkedList<Data>::CIterator it = list.end(); it.isValid(); --it) {
             CHECK(it.getData().value == value);
@@ -235,4 +292,3 @@ TEST_CASE("erase_and_next") {
         CHECK(list.getSize() == 0);
     }
 }
-

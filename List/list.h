@@ -294,6 +294,9 @@ namespace lab618
         T popBack() {
             T data = m_pEnd->data;
             leaf* prev = m_pEnd->pprev;
+            if (m_pBegin == m_pEnd) {
+                m_pBegin = nullptr;
+            }
             delete(m_pEnd);
             m_pEnd = prev;
             return data;
@@ -312,6 +315,9 @@ namespace lab618
         T popFront() {
             T data = m_pBegin->data;
             leaf* next = m_pBegin->pnext;
+            if (m_pBegin == m_pEnd) {
+                m_pBegin = nullptr;
+            }
             delete(m_pBegin);
             m_pBegin = next;
             return data;
