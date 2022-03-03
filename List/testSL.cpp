@@ -131,16 +131,20 @@ TEST_CASE("erase") {
     }
 }
 
-TEST_CASE("clear + push") {
+TEST_CASE("push + erase + push") {
     lab618::CSingleLinkedList<Data> list;
-    int size = 100;
+    int size = 10;
     for (int i = 0; i < size; ++i) {
         Data data(i);
         list.pushBack(data);
     }
-    list.clear();
+    for (auto it = list.begin(); it.isValid(); ++it) {
+        list.erase(it);
+    }
     CHECK(list.getSize() == 0);
-    Data data(10);
-    list.pushBack(data);
-    CHECK(list.getSize() == 1);
+    for (int i = 0; i < size; ++i) {
+        Data data(i);
+        list.pushFront(data);
+    }
+    CHECK(list.getSize() == size);
 }

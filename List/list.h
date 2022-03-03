@@ -105,29 +105,36 @@ namespace lab618
         void pushFront(T& data) {
             leaf* new_leaf = new leaf(data, m_pBegin);
             m_pBegin = new_leaf;
-            if (m_pBegin == nullptr) {
+            if (m_pEnd == nullptr) {
                 m_pEnd = m_pBegin;
             }
         }
 
+        //сначала изменение, потом удаление to do!
         T popFront() {
             T data = m_pBegin->data;
             leaf* next = m_pBegin->pnext;
             delete(m_pBegin);
             m_pBegin = next;
+            if (m_pBegin == nullptr) {
+                m_pEnd = nullptr;
+            }
             return data;
         }
 
         // изменяет состояние итератора. выставляет предыдущую позицию.
         void erase(CIterator& it) {
+            if(!it.isValid()) {
+                return;
+            }
             if (it.getLeaf() == m_pBegin) {
-                leaf* new_begin = m_pBegin->pnext;
-                if (m_pEnd == m_pBegin) {
+                leaf* old_begin = m_pBegin;
+                m_pBegin = m_pBegin -> pnext;
+                if (m_pEnd == old_begin) {
                     m_pEnd = nullptr;
                 }
-                m_pBegin->~leaf();
-                it.setLeafPreBegin(new_begin);
-                m_pBegin = new_begin;
+                old_begin->~leaf();
+                it.setLeafPreBegin(m_pBegin);
             } else {
                 leaf* previous = m_pBegin;
                 while (previous->pnext != it.getLeaf()) {
