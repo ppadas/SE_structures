@@ -14,7 +14,6 @@ namespace lab618
             T data;
             leaf * pnext;
             leaf(T& _data, leaf * _pnext) : data(_data), pnext(_pnext) {}
-
             ~leaf() 
             {
                 data.~T();
