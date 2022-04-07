@@ -1,3 +1,5 @@
+#include <cstring>
+
 #ifndef MEMORY_MANAGER_HEAD_H_2022_02_17
 #define MEMORY_MANAGER_HEAD_H_2022_02_17
 
@@ -10,12 +12,14 @@ namespace lab618
         struct block
         {
             block(int m_blkSize) {
-                pdata = new T[m_blkSize];
+                //выделяется как char
+                pdata = reinterpret_cast<T*>(new char[m_blkSize * sizeof(T)]);
                 for (int i = 0; i < m_blkSize - 1; ++i) {
                     *reinterpret_cast<int*>(pdata + i) = i + 1;
                 }
                 *reinterpret_cast<int*>(pdata + m_blkSize - 1) = -1;
             }
+
             // Массив данных блока
             T* pdata = nullptr;
             // Адрес следующего блока
@@ -42,6 +46,7 @@ namespace lab618
 
         virtual ~CMemoryManager()
         {
+            clear();
         }
 
         // Получить адрес нового элемента из менеджера
@@ -60,7 +65,12 @@ namespace lab618
             int free_index = current->firstFreeIndex;
             current->firstFreeIndex = *reinterpret_cast<int*>(current->pdata + current->firstFreeIndex);
             ++current->usedCount;
-            return current->pdata + free_index;
+            T* new_element = current->pdata + free_index;
+            memset(reinterpret_cast<void*>(new_element), 0, sizeof(T));
+            //конструктор
+            ::new(reinterpret_cast<void*>(new_element)) T;
+            return new_element;
+            return nullptr;
         }
 
         // Освободить элемент в менеджере
@@ -72,9 +82,12 @@ namespace lab618
             block* current = m_pBlocks;
             while(current != nullptr) {
                 if (current->pdata <= p && current->pdata + m_blkSize > p) {
+                    //деструктор
+                    p->~T();
+                    memset(reinterpret_cast<void*>(p), 0, sizeof(T));
                     *reinterpret_cast<int*> (p) = current->firstFreeIndex;
                     current->firstFreeIndex = p - current->pdata;
-                    ++current->usedCount;
+                    --current->usedCount;
                     return true;
                 }
                 current = current->pnext;
@@ -96,12 +109,24 @@ namespace lab618
                 int iter = current->firstFreeIndex;
                 while(iter != -1) {
                     to_free[iter] = false;
-                    iter = *reinterpret_cast<int*>(current->pdata[iter]);
+                    iter = *reinterpret_cast<int*>(current->pdata + iter);
                 }
                 block* next_block = current->pnext;
                 deleteBlock(current, to_free);
                 current = next_block;
             }
+        }
+
+        int getBlocksCount() 
+        {
+            int i = 0;
+            block* current = m_pBlocks;
+            while(current != nullptr) 
+            {
+                ++i;
+                current = current->pnext;
+            }
+            return i;
         }
     private:
 
@@ -111,6 +136,7 @@ namespace lab618
             if (m_pBlocks == nullptr) {
                 m_pBlocks = new block(m_blkSize);
                 m_pCurrentBlk = m_pBlocks;
+                return m_pCurrentBlk;
             }
             m_pCurrentBlk->pnext = new block(m_blkSize);
             m_pCurrentBlk = m_pCurrentBlk->pnext;
@@ -125,7 +151,7 @@ namespace lab618
                     p->pdata[i].~T();
                 }
             }
-            delete[] p->pdata;
+            delete[] reinterpret_cast<char*>(p->pdata);
             delete p;
         }
 
