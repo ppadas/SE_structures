@@ -86,4 +86,9 @@ TEST_CASE("new after delete") {
         }
     }
     CHECK(amount == manager.getBlocksCount());
+    for (int i = 0; i < size; ++i) {
+        if (i % 2 == 0) {
+            data[i] = manager.newObject();
+        }
+    }
 }
