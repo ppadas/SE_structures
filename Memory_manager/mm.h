@@ -100,6 +100,7 @@ namespace lab618
         void clear()
         {
             block* current = m_pBlocks;
+            m_pBlocks = nullptr;
             while (current != nullptr)
             {
                 bool* to_free = new bool[m_blkSize];
