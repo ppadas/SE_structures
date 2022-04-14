@@ -16,21 +16,30 @@ namespace templates
     void mergeSort(void **ppArray, int length, CompareSortType pCompareFunc);
     void heapSort(void **ppArray, int length, CompareSortType pCompareFunc);
     void bubbleSort(void **ppArray, int length, CompareSortType pCompareFunc);
+    void make_heap(void **ppArray, int length, CompareSortType pCompareFunc);
 
     template <class T>
     void mergeSort(T **ppArray, int length, int (pCompareFunc)(const T *pElem1, const T *pElem2))
     {
         mergeSort(reinterpret_cast<void**>(ppArray), length, (CompareSortType*)pCompareFunc);
     }
+
     template <class T>
     void heapSort(T **ppArray, int length, int (pCompareFunc)(const T *pElem1, const T *pElem2))
     {
         heapSort(reinterpret_cast<void**>(ppArray), length, (CompareSortType*)pCompareFunc);
     }
+
     template <class T>
     void bubbleSort(T **ppArray, int length, int (pCompareFunc)(const T *pElem1, const T *pElem2))
     {
         bubbleSort(reinterpret_cast<void**>(ppArray), length, (CompareSortType*)pCompareFunc);
+    }
+
+    template <class T>
+    void make_heap(T **ppArray, int length, int (pCompareFunc)(const T *pElem1, const T *pElem2))
+    {
+        make_heap(reinterpret_cast<void**>(ppArray), length, (CompareSortType*)pCompareFunc);
     }
 }; // namespace templates
 
