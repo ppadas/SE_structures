@@ -114,6 +114,7 @@ namespace lab618
                     delete current;
                     current = next_block;
                 }
+                return;
             }
             block* current = m_pBlocks;
             m_pBlocks = nullptr;
