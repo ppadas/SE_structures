@@ -61,6 +61,9 @@ namespace lab618
             }
             if (current == nullptr) {
                 current = newBlock();
+                if (current == nullptr) {
+                    return nullptr;
+                }
             }
             int free_index = current->firstFreeIndex;
             current->firstFreeIndex = *reinterpret_cast<int*>(current->pdata + current->firstFreeIndex);
@@ -70,14 +73,13 @@ namespace lab618
             //конструктор
             ::new(reinterpret_cast<void*>(new_element)) T;
             return new_element;
-            return nullptr;
         }
 
         // Освободить элемент в менеджере
         bool deleteObject(T* p)
         {
             if (p == nullptr) {
-                throw CException();
+                return false;
             }
             block* current = m_pBlocks;
             while(current != nullptr) {
