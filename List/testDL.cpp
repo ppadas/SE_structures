@@ -292,3 +292,4 @@ TEST_CASE("erase_and_next") {
         CHECK(list.getSize() == 0);
     }
 }
+

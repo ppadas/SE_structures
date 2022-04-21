@@ -9,3 +9,4 @@ set(SRC_LIST_DL ./test_lib/doctest.h testDL.cpp list.h)
 
 add_executable(SL_test ${SRC_LIST_SL})
 add_executable(DL_test ${SRC_LIST_DL})
+
