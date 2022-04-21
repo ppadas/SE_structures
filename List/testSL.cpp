@@ -148,3 +148,4 @@ TEST_CASE("push + erase + push") {
     }
     CHECK(list.getSize() == size);
 }
+
