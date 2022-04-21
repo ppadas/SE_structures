@@ -1,4 +1,5 @@
 #include <cstring>
+
 #ifndef MEMORY_MANAGER_HEAD_H_2022_02_17
 #define MEMORY_MANAGER_HEAD_H_2022_02_17
 
@@ -8,7 +9,6 @@ namespace lab618
     class CMemoryManager
     {
     private:
-    
         struct block
         {
             block(int m_blkSize) {
@@ -99,11 +99,25 @@ namespace lab618
         // Очистка данных, зависит от m_isDeleteElementsOnDestruct
         void clear()
         {
+            if (!m_isDeleteElementsOnDestruct) {
+                block* current = m_pBlocks;
+                m_pBlocks = nullptr;
+                while (current != nullptr) {
+                    if (current->usedCount != 0) {
+                        throw CException();
+                    }
+                    block* next_block = current->pnext;
+                    delete[] reinterpret_cast<char*>(current->pdata);
+                    current->pdata = nullptr;
+                    delete current;
+                    current = next_block;
+                }
+            }
             block* current = m_pBlocks;
             m_pBlocks = nullptr;
+            bool* to_free = new bool[m_blkSize];
             while (current != nullptr)
             {
-                bool* to_free = new bool[m_blkSize];
                 for (int i = 0; i < m_blkSize; ++i) {
                     to_free[i] = m_isDeleteElementsOnDestruct;
                 }
@@ -153,7 +167,9 @@ namespace lab618
                 }
             }
             delete[] reinterpret_cast<char*>(p->pdata);
+            p->pdata = nullptr;
             delete p;
+            p = nullptr;
         }
 
         // Размер блока
