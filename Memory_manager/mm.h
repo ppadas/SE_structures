@@ -8,6 +8,7 @@ namespace lab618
     class CMemoryManager
     {
     private:
+    
         struct block
         {
             block(int m_blkSize) {

@@ -1,7 +1,6 @@
 #ifndef MEMORY_MANAGER_HEAD_H_2022_02_17
 #define MEMORY_MANAGER_HEAD_H_2022_02_17
 
-
 namespace lab618
 {
     template <class T>

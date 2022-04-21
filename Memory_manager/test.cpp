@@ -5,7 +5,6 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
-
 struct Data{
 public:
     Data() {}
