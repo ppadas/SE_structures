@@ -92,3 +92,37 @@ TEST_CASE("new after delete") {
         }
     }
 }
+
+TEST_CASE("No destrustor") {
+    SUBCASE("it works") {
+        lab618::CMemoryManager<Data> manager(5, false);
+        std::vector<Data*> data;
+        int size = 50;
+        for (int i = 0; i < size; ++i) {
+            data.push_back(manager.newObject());
+            data[i]->value = i;
+        }
+        for (int i = 0; i < size; ++i) {
+            CHECK(manager.deleteObject(data[i]));
+            CHECK(data[i]->value != i);
+        }
+        CHECK_NOTHROW(manager.clear());
+    }
+
+    SUBCASE("detect memory leak") {
+        lab618::CMemoryManager<Data> manager(5, false);
+        std::vector<Data*> data;
+        int size = 50;
+        for (int i = 0; i < size; ++i) {
+            data.push_back(manager.newObject());
+            data[i]->value = i;
+        }
+        for (int i = 0; i < size; ++i) {
+            if (i % 2 == 0) {
+                CHECK(manager.deleteObject(data[i]));
+                CHECK(data[i]->value != i);
+            }
+        }
+        CHECK_THROWS(manager.clear());
+    }
+}
