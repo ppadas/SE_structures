@@ -1,0 +1,3 @@
+/home/krolchonok/Documents/Study/3-course/SE_structure/SE_structures/Memory_manager/build/CMakeFiles/rebuild_cache.dir
+/home/krolchonok/Documents/Study/3-course/SE_structure/SE_structures/Memory_manager/build/CMakeFiles/edit_cache.dir
+/home/krolchonok/Documents/Study/3-course/SE_structure/SE_structures/Memory_manager/build/CMakeFiles/test.dir
