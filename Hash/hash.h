@@ -69,14 +69,19 @@ namespace lab618
         Размер Хеш таблицы реализуем жестко — изменение размера таблицы в зависимости от числа элементов в контейнере не требуется.
         Все создаваемые листики списков разрешения коллизий храним в менеджере памяти.
         */
-        CHash(int hashTableSize, int defaultBlockSize)
+        CHash(int hashTableSize, int defaultBlockSize) : m_tableSize(hashTableSize), m_Memory(defaultBlockSize, true)
         {
+            m_pTable = new leaf*[hashTableSize];
+            for (int i = 0; i < hashTableSize; ++i) {
+                m_pTable[i] = nullptr;
+            }
         }
         /**
         Деструктор. Должен освобождать всю выделенную память
         */
         virtual ~CHash()
         {
+            clear();
         }
 
         /**
@@ -84,13 +89,39 @@ namespace lab618
         */
         bool add(T* pElement)
         {
+            unsigned int index = -1;
+            leaf* current = findLeaf(pElement, index);
+            if (current == nullptr && m_pTable[index] == nullptr) {
+                m_pTable[index] = m_Memory.newObject();
+                current = m_pTable[index];
+            } else if (current == nullptr) {
+                current = m_pTable[index];
+                while(current -> pnext != nullptr) {
+                    current = current -> pnext;
+                }
+                current -> pnext =  m_Memory.newObject();
+                current = current -> pnext;
+            } else {
+                return false;
+            }
+            current -> pData = pElement;
+            current -> pnext = nullptr;
+            return true;
         }
         /**
-        Функция обновления элемента в Хеш-таблице. Обновляет, если элемент уже есть добавляет, если элемента еще нет.
+        Функция обновления элемента в Хеш-таблице. Обновляет, если элемент уже есть, добавляет, если элемента еще нет.
         Возвращает false, если был добавлен новый элемент, true если элемент обновлен.
         */
         bool update(T* pElement)
         {
+            unsigned int ind = -1;
+            leaf* elem_leaf = findLeaf(pElement, ind);
+            if (elem_leaf == nullptr) {
+                add(pElement);
+                return false;
+            }
+            elem_leaf->pData = pElement;
+            return true;
         }
 
         /**
@@ -98,6 +129,12 @@ namespace lab618
         Обратите внимание, что для поиска используется частично заполненный объект, т.е. В нем должны быть заполнены поля на основе которых рассчитывается хеш.*/
         T* find(const T& element)
         {
+            unsigned int ind = -1;
+            leaf* elem_leaf = findLeaf(&element, ind);
+            if (elem_leaf != nullptr) {
+                return elem_leaf -> pData;
+            }
+            return nullptr;
         }
 
         /**
@@ -105,6 +142,26 @@ namespace lab618
         */
         bool remove(const T& element)
         {
+            unsigned int hash_key = HashFunc(&element) % m_tableSize;
+            leaf* current = m_pTable[hash_key];
+            if (current == nullptr) {
+                return false;
+            }
+            leaf* previous = nullptr;
+            while(current != nullptr) {
+                if (Compare(current->pData, &element) == 0) {
+                    if (previous != nullptr) {
+                        previous -> pnext = current -> pnext;
+                    } else {
+                        m_pTable[hash_key] = current -> pnext;
+                    }
+                    m_Memory.deleteObject(current);
+                    return true;
+                }
+                previous = current;
+                current = current -> pnext;
+            }
+            return false;
         }
 
         /**
@@ -112,6 +169,16 @@ namespace lab618
         */
         void clear()
         {
+            for (int i = 0; i < m_tableSize; ++i) {
+                leaf* current = m_pTable[i];
+                while(current != nullptr) {
+                    leaf* next = current -> pnext;
+                    m_Memory.deleteObject(current);
+                    current = next;
+                }
+                m_pTable[i] = nullptr;
+            }
+            m_pTable = nullptr;
         }
     private:
         /**
@@ -126,6 +193,18 @@ namespace lab618
         */
         leaf *findLeaf(const T* pElement, unsigned int & idx)
         {
+            idx = HashFunc(pElement) % m_tableSize;
+            leaf* current = m_pTable[idx];
+            if (current == nullptr) {
+                return nullptr;
+            }
+            while(current != nullptr) {
+                if (Compare(current->pData, pElement) == 0) {
+                    return current;
+                }
+                current = current -> pnext;
+            }
+            return nullptr;
         }
 
         /**
