@@ -82,6 +82,8 @@ namespace lab618
         virtual ~CHash()
         {
             clear();
+            delete[] m_pTable;
+            m_pTable = nullptr;
         }
 
         /**
@@ -91,21 +93,13 @@ namespace lab618
         {
             unsigned int index = -1;
             leaf* current = findLeaf(pElement, index);
-            if (current == nullptr && m_pTable[index] == nullptr) {
-                m_pTable[index] = m_Memory.newObject();
-                current = m_pTable[index];
-            } else if (current == nullptr) {
-                current = m_pTable[index];
-                while(current -> pnext != nullptr) {
-                    current = current -> pnext;
-                }
-                current -> pnext =  m_Memory.newObject();
-                current = current -> pnext;
-            } else {
+            if(current != nullptr) {
                 return false;
             }
-            current -> pData = pElement;
-            current -> pnext = nullptr;
+            current = m_Memory.newObject();
+            current->pnext = m_pTable[index];
+            current->pData = pElement;
+            m_pTable[index] = current;
             return true;
         }
         /**
@@ -114,14 +108,17 @@ namespace lab618
         */
         bool update(T* pElement)
         {
-            unsigned int ind = -1;
-            leaf* elem_leaf = findLeaf(pElement, ind);
-            if (elem_leaf == nullptr) {
-                add(pElement);
-                return false;
+            unsigned int index = -1;
+            leaf* elem_leaf = findLeaf(pElement, index);
+            if (elem_leaf != nullptr) {
+                elem_leaf->pData = pElement;
+                return true;
             }
+            elem_leaf = m_Memory.newObject();
+            elem_leaf->pnext = m_pTable[index];
             elem_leaf->pData = pElement;
-            return true;
+            m_pTable[index] = elem_leaf;
+            return false;
         }
 
         /**
@@ -132,7 +129,7 @@ namespace lab618
             unsigned int ind = -1;
             leaf* elem_leaf = findLeaf(&element, ind);
             if (elem_leaf != nullptr) {
-                return elem_leaf -> pData;
+                return elem_leaf->pData;
             }
             return nullptr;
         }
@@ -151,15 +148,15 @@ namespace lab618
             while(current != nullptr) {
                 if (Compare(current->pData, &element) == 0) {
                     if (previous != nullptr) {
-                        previous -> pnext = current -> pnext;
+                        previous->pnext = current->pnext;
                     } else {
-                        m_pTable[hash_key] = current -> pnext;
+                        m_pTable[hash_key] = current->pnext;
                     }
                     m_Memory.deleteObject(current);
                     return true;
                 }
                 previous = current;
-                current = current -> pnext;
+                current = current->pnext;
             }
             return false;
         }
@@ -172,13 +169,12 @@ namespace lab618
             for (int i = 0; i < m_tableSize; ++i) {
                 leaf* current = m_pTable[i];
                 while(current != nullptr) {
-                    leaf* next = current -> pnext;
+                    leaf* next = current->pnext;
                     m_Memory.deleteObject(current);
                     current = next;
                 }
                 m_pTable[i] = nullptr;
             }
-            m_pTable = nullptr;
         }
     private:
         /**
@@ -202,7 +198,7 @@ namespace lab618
                 if (Compare(current->pData, pElement) == 0) {
                     return current;
                 }
-                current = current -> pnext;
+                current = current->pnext;
             }
             return nullptr;
         }

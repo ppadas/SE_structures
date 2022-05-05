@@ -9,6 +9,7 @@ struct Data {
     Data(std::string key, int value) : key(key), value(value) {}
     std::string key = "";
     int value = 0;
+    int inner_data = 0;
 };
 
 unsigned int HashFunc(const Data* pElement) {
