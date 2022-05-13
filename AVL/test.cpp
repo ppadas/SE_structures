@@ -59,6 +59,28 @@ TEST_CASE("remove") {
     CHECK(my_tree.find(data2));
 }
 
+TEST_CASE("updata") {
+    int size = 10;
+    templates::CAVLTree<Data, Compare> my_tree;
+    std::vector<Data> data;
+    for (int i = 0; i < size; ++i) {
+        data.push_back(Data("name", i));
+    }
+    Data to_update("name", size / 2);
+    for (int i = 0; i < size; ++i) {
+        if (i == size/2) {
+            my_tree.add(&to_update);
+            continue;
+        }
+        CHECK(my_tree.add(&data[i]));
+    }
+    Data new_data("newData", size/2);
+    CHECK(my_tree.update(&new_data));
+    CHECK(my_tree.find(new_data)->key == "newData");
+    Data errorData("data", size + 1);
+    CHECK_FALSE(my_tree.update(&errorData));
+}
+
 TEST_CASE("just work") {
     int size = 10;
     templates::CAVLTree<Data, Compare> my_tree;

@@ -48,7 +48,7 @@ namespace templates
 
         bool update(T* pElement)
         {
-            leaf* node = find(*pElement);
+            leaf* node = findStep(*pElement, m_pRoot);
             if (node == nullptr) {
                 add(pElement);
                 return false;
@@ -64,30 +64,6 @@ namespace templates
             return (f == nullptr) ? nullptr : f->pData;
         }
 
-        T* childLeft(const T& pElement) {
-            leaf* l = findStep(pElement, m_pRoot);
-            if (l == nullptr) {
-                return nullptr;
-            } else {
-                l = l->pLeft;
-            }
-            return l ? l->pData : nullptr;
-        }
-
-        T* childRight(const T& pElement) {
-            leaf* l = findStep(pElement, m_pRoot);
-            if (l == nullptr) {
-                return nullptr;
-            } else {
-                l = l->pRight;
-            }
-            return l ? l->pData : nullptr;
-        }
-
-        bool checkBalance() {
-            return checkBalanceStep(m_pRoot);
-        }
-
         bool remove(const T& element)
         {
             bool flag = true;
@@ -99,6 +75,36 @@ namespace templates
         {
             clear(m_pRoot);
             m_pRoot = nullptr;
+        }
+
+        //метод не является обязательным для реализации класса,
+        //используется для отладки и печати дерева
+        T* childLeft(const T& pElement) {
+            leaf* l = findStep(pElement, m_pRoot);
+            if (l == nullptr) {
+                return nullptr;
+            } else {
+                l = l->pLeft;
+            }
+            return l ? l->pData : nullptr;
+        }
+
+        //метод не является обязательным для реализации класса,
+        //используется для отладки и печати дерева
+        T* childRight(const T& pElement) {
+            leaf* l = findStep(pElement, m_pRoot);
+            if (l == nullptr) {
+                return nullptr;
+            } else {
+                l = l->pRight;
+            }
+            return l ? l->pData : nullptr;
+        }
+
+        //метод не является обязательным для реализации класса,
+        //используется для проверки сбалансированности дерева
+        bool checkBalance() {
+            return checkBalanceStep(m_pRoot);
         }
 
     private:
