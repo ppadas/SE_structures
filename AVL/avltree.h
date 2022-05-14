@@ -145,7 +145,7 @@ namespace templates
         void updateHeight(leaf* node) {
             int left_height = node->pLeft ? node->pLeft->height : 0;
             int right_height = node->pRight ? node->pRight->height : 0;
-            node->height = std::max(left_height, right_height) + 1;
+            node->height = (left_height > right_height ? left_height : right_height) + 1;
             node->balanceFactor = left_height - right_height;
         }
 

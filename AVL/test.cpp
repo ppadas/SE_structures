@@ -250,7 +250,7 @@ TEST_CASE("random") {
     std::default_random_engine e(seed);
     auto rng = std::default_random_engine {e};
     std::shuffle(data.begin(), data.end(), rng);
-    for (int i = 0; i < data.size(); ++i) {
+    for (long unsigned int i = 0; i < data.size(); ++i) {
         std::cout << data[i].value << "\n";
     }
     std::cout << "------";
